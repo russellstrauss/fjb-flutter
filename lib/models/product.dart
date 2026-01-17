@@ -55,7 +55,19 @@ class Product {
       regularPrice: (json['regular_price'] as num).toDouble(),
       salePrice: json['sale_price'] != null ? (json['sale_price'] as num).toDouble() : null,
       shortDescription: json['short_description'] as String?,
-      images: (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      images: (json['images'] as List<dynamic>?)
+              ?.map((e) {
+                if (e is String) {
+                  return e.trim();
+                } else if (e is Map<String, dynamic> && e.containsKey('src')) {
+                  return (e['src'] as String).trim();
+                } else {
+                  return e.toString().trim();
+                }
+              })
+              .where((img) => img.isNotEmpty)
+              .toList() ??
+          [],
       stockQuantity: json['stock_quantity'] as int?,
       stockStatus: json['stock_status'] as String? ?? 'instock',
       inStock: json['in_stock'] as bool? ?? true,
