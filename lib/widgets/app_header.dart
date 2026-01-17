@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/cart_service.dart';
 import '../utils/image_loader.dart';
 
@@ -78,6 +79,7 @@ class _AppHeaderState extends State<AppHeader> {
                 minWidth: 48,
                 minHeight: 48,
               ),
+              iconSize: 48,
             ),
                 // Logo (hidden if hideLogo is true)
                 if (!widget.hideLogo)
@@ -118,6 +120,7 @@ class _AppHeaderState extends State<AppHeader> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.shopping_cart),
+                      iconSize: 48,
                       onPressed: () {
                         _closeMenu();
                         context.push('/cart');
@@ -179,27 +182,38 @@ class _MenuOverlay extends StatefulWidget {
 
 class _MenuOverlayState extends State<_MenuOverlay> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _shopAnimation;
-  late Animation<double> _aboutAnimation;
+  late Animation<double> _shopOpacityAnimation;
+  late Animation<double> _shopSlideAnimation;
+  late Animation<double> _aboutOpacityAnimation;
+  late Animation<double> _aboutSlideAnimation;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
-    // Shop animation starts immediately with easing curve
-    _shopAnimation = CurvedAnimation(
+    // Shop animations - opacity slower (800ms), slide faster (400ms equivalent)
+    _shopOpacityAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.0, 0.5, curve: Curves.easeOutCubic),
+      curve: const Interval(0.0, 1.0, curve: Curves.easeOut),
+    );
+    _shopSlideAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.0, 0.5, curve: Curves.easeOutCubic), // 50% of 800ms = 400ms
     );
 
-    // About animation starts after a delay with easing curve
-    _aboutAnimation = CurvedAnimation(
+    // About animations - opacity slower (800ms), slide faster (400ms equivalent)
+    // Starts 150ms after Shop (150ms / 800ms = 0.1875)
+    _aboutOpacityAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.2, 0.7, curve: Curves.easeOutCubic),
+      curve: const Interval(0.1875, 1.0, curve: Curves.easeOut),
+    );
+    _aboutSlideAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.1875, 0.6875, curve: Curves.easeOutCubic), // ~400ms duration starting at 150ms
     );
 
     // Start the animation when widget is built
@@ -238,7 +252,8 @@ class _MenuOverlayState extends State<_MenuOverlay> with SingleTickerProviderSta
                   children: [
                     _MenuTextItem(
                       text: 'Shop',
-                      animation: _shopAnimation,
+                      opacityAnimation: _shopOpacityAnimation,
+                      slideAnimation: _shopSlideAnimation,
                       onTap: () {
                         widget.onClose();
                         GoRouter.of(context).push('/shop');
@@ -247,7 +262,8 @@ class _MenuOverlayState extends State<_MenuOverlay> with SingleTickerProviderSta
                     const SizedBox(height: 40),
                     _MenuTextItem(
                       text: 'About',
-                      animation: _aboutAnimation,
+                      opacityAnimation: _aboutOpacityAnimation,
+                      slideAnimation: _aboutSlideAnimation,
                       onTap: () {
                         widget.onClose();
                         GoRouter.of(context).push('/about');
@@ -329,76 +345,93 @@ class _AnimatedHamburgerIconState extends State<_AnimatedHamburgerIcon>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 24,
-      height: 18,
+    // Make icon 48x48 to match shopping cart icon (square)
+    // Calculate bounding box for rotated content: diagonal of 45° rotation = size * sqrt(2)
+    // Use clipBehavior: Clip.none to prevent clipping during rotation
+    final baseSize = 48.0;
+    final rotatedSize = baseSize * 1.414; // sqrt(2) for 45° rotation diagonal
+    
+    return Container(
+      width: baseSize,
+      height: baseSize,
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      // Use OverflowBox to allow content to extend when rotated, sized dynamically
+      child: OverflowBox(
+        maxWidth: rotatedSize,
+        maxHeight: rotatedSize,
+        alignment: Alignment.center,
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
-          // Calculate positions for 3 lines: 2px height each with 6px spacing
-          // Total height: 2 + 6 + 2 + 6 + 2 = 18px
-          // Center position: 9px (middle of 18px)
-          // Top line starts at 0, needs to move to center (8px down)
-          // Bottom line starts at 16, needs to move to center (8px up)
+          // Calculate positions for 3 lines: 5px height each with 10px spacing (even)
+          // Total height: 5 + 10 + 5 + 10 + 5 = 35px
+          // Center the 35px content in 48px container: starts at 6.5px
+          // Center of 48px container: 24px
+          // Top line top edge: 6.5px, moves to 21.5px (24 - 2.5) so center is at 24px
+          // Middle line top edge: 21.5px (6.5 + 5 + 10) so center is at 24px
+          // Bottom line top edge: 36.5px, moves to 21.5px so center is at 24px
           
           return Stack(
+            clipBehavior: Clip.none,
             children: [
               // Top line - rotates down and moves to center, then forms X (45 degrees)
               Positioned(
-                top: 0 + _animation.value * 8, // Move from 0 to 8 (center)
-                left: 0,
-                right: 0,
-                child: Transform.rotate(
-                  angle: _animation.value * 0.785398, // 45 degrees in radians
-                  alignment: Alignment.center,
-                  child: Container(
-                    height: 2,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(1),
-                    ),
-                  ),
-                ),
-              ),
-              // Middle line - fades out and scales down to 0
-              Positioned(
-                top: 8,
-                left: 0,
-                right: 0,
-                child: Transform.scale(
-                  scaleX: 1 - _animation.value,
-                  child: Opacity(
-                    opacity: 1 - _animation.value,
+                top: 6.5 + _animation.value * 15, // Move from 6.5px to 21.5px (top edge), center at 24px
+                  left: 4,
+                  right: 4,
+                  child: Transform.rotate(
+                    angle: _animation.value * 0.785398, // 45 degrees in radians
+                    alignment: Alignment.center,
                     child: Container(
-                      height: 2,
+                      height: 5,
                       decoration: BoxDecoration(
                         color: Colors.black,
-                        borderRadius: BorderRadius.circular(1),
+                        borderRadius: BorderRadius.circular(2.5),
                       ),
                     ),
                   ),
                 ),
-              ),
-              // Bottom line - rotates up and moves to center, then forms X (-45 degrees)
+              // Middle line - fades out and scales down to 0
               Positioned(
-                top: 16 - _animation.value * 8, // Move from 16 to 8 (center)
-                left: 0,
-                right: 0,
-                child: Transform.rotate(
-                  angle: -_animation.value * 0.785398, // -45 degrees in radians
-                  alignment: Alignment.center,
-                  child: Container(
-                    height: 2,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(1),
+                top: 21.5, // Top edge: 6.5 + 5 + 10 = 21.5px, center at 24px
+                  left: 4,
+                  right: 4,
+                  child: Transform.scale(
+                    scaleX: 1 - _animation.value,
+                    child: Opacity(
+                      opacity: 1 - _animation.value,
+                      child: Container(
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(2.5),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+              // Bottom line - rotates up and moves to center, then forms X (-45 degrees)
+              Positioned(
+                top: 36.5 - _animation.value * 15, // Move from 36.5px to 21.5px (top edge), center at 24px
+                  left: 4,
+                  right: 4,
+                  child: Transform.rotate(
+                    angle: -_animation.value * 0.785398, // -45 degrees in radians
+                    alignment: Alignment.center,
+                    child: Container(
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(2.5),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -409,23 +442,25 @@ class _AnimatedHamburgerIconState extends State<_AnimatedHamburgerIcon>
 class _MenuTextItem extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
-  final Animation<double> animation;
+  final Animation<double> opacityAnimation;
+  final Animation<double> slideAnimation;
 
   const _MenuTextItem({
     required this.text,
     required this.onTap,
-    required this.animation,
+    required this.opacityAnimation,
+    required this.slideAnimation,
   });
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animation,
+      animation: Listenable.merge([opacityAnimation, slideAnimation]),
       builder: (context, child) {
-        // Slide from left to right: start at -100px, end at 0px
-        final slideOffset = -100 * (1 - animation.value);
-        // Fade in: start at opacity 0, end at opacity 1
-        final opacity = animation.value;
+        // Slide from left to right: start at -100px, end at 0px (using faster slide animation)
+        final slideOffset = -100 * (1 - slideAnimation.value);
+        // Fade in: start at opacity 0, end at opacity 1 (using slower opacity animation)
+        final opacity = opacityAnimation.value;
 
         return Transform.translate(
           offset: Offset(slideOffset, 0),
@@ -436,9 +471,9 @@ class _MenuTextItem extends StatelessWidget {
               child: InkWell(
                 onTap: onTap,
                 child: Text(
-                  text,
+                  text.toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: GoogleFonts.montserrat(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,

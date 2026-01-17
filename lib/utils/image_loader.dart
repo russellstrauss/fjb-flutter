@@ -29,11 +29,6 @@ class ImageLoader {
       assetPath = path;
     }
     
-    // Debug logging
-    if (kDebugMode) {
-      print('[ImageLoader] Path conversion: "$originalPath" -> "$assetPath"');
-    }
-    
     return assetPath;
   }
 
@@ -89,14 +84,6 @@ class ImageLoader {
       width: width,
       height: height,
       errorBuilder: (context, error, stackTrace) {
-        // Debug logging for errors
-        if (kDebugMode) {
-          print('[ImageLoader] ERROR loading image:');
-          print('  Original path: "$path"');
-          print('  Converted path: "$assetPath"');
-          print('  Error: $error');
-        }
-        
         // Return custom error widget or default with path info
         if (errorWidget != null) {
           return errorWidget;

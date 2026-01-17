@@ -29,8 +29,31 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
+  <!-- Google Fonts - Montserrat and Open Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
   <title>farmer_johns_botanicals</title>
   <link rel="manifest" href="manifest.json">
+  
+  <script>
+    // Ensure fonts are loaded before Flutter starts
+    document.fonts.ready.then(function() {
+      console.log('Fonts loaded: Montserrat and Open Sans should be available');
+      // Log available font families for debugging
+      var availableFonts = [];
+      if (document.fonts && document.fonts.check) {
+        ['Montserrat', 'Open Sans'].forEach(function(font) {
+          var isLoaded = document.fonts.check('16px "' + font + '"');
+          availableFonts.push({font: font, loaded: isLoaded});
+        });
+        console.log('Font availability check:', availableFonts);
+      }
+    }).catch(function(err) {
+      console.error('Font loading error:', err);
+    });
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
