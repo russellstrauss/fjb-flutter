@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../services/cart_service.dart';
 import '../services/stripe_service.dart';
@@ -50,14 +51,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _formatPhoneNumber(String value) {
     final digits = value.replaceAll(RegExp(r'\D'), '');
+    // Limit to 10 digits
+    final limitedDigits = digits.length > 10 ? digits.substring(0, 10) : digits;
     String formatted = '';
-    if (digits.length > 0) {
-      if (digits.length <= 3) {
-        formatted = '($digits';
-      } else if (digits.length <= 6) {
-        formatted = '(${digits.substring(0, 3)}) ${digits.substring(3)}';
+    if (limitedDigits.length > 0) {
+      if (limitedDigits.length <= 3) {
+        formatted = '($limitedDigits';
+      } else if (limitedDigits.length <= 6) {
+        formatted = '(${limitedDigits.substring(0, 3)}) ${limitedDigits.substring(3)}';
       } else {
-        formatted = '(${digits.substring(0, 3)}) ${digits.substring(3, 6)}-${digits.substring(6, 10)}';
+        final areaCode = limitedDigits.substring(0, 3);
+        final exchange = limitedDigits.substring(3, 6);
+        final number = limitedDigits.substring(6);
+        formatted = '($areaCode) $exchange-$number';
       }
     }
     _phoneController.value = TextEditingValue(
@@ -255,6 +261,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   keyboardType: TextInputType.phone,
                                   onChanged: _formatPhoneNumber,
                                   hasError: _fieldErrors['phone'] ?? false,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
                                 ),
                               ],
                             ),
@@ -496,6 +505,7 @@ class _FormField extends StatelessWidget {
   final int? maxLines;
   final void Function(String)? onChanged;
   final bool hasError;
+  final List<TextInputFormatter>? inputFormatters;
 
   const _FormField({
     required this.label,
@@ -504,6 +514,7 @@ class _FormField extends StatelessWidget {
     this.maxLines,
     this.onChanged,
     this.hasError = false,
+    this.inputFormatters,
   });
 
   @override
@@ -521,6 +532,7 @@ class _FormField extends StatelessWidget {
           keyboardType: keyboardType,
           maxLines: maxLines,
           onChanged: onChanged,
+          inputFormatters: inputFormatters,
           decoration: InputDecoration(
             errorText: hasError ? 'This field is required' : null,
             border: const OutlineInputBorder(),

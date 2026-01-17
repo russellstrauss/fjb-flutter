@@ -12,8 +12,16 @@ import 'screens/login_screen.dart';
 import 'screens/admin_screen.dart';
 import 'screens/orders_screen.dart';
 import 'services/auth_service.dart';
+import 'services/stripe_service.dart';
 
 void main() {
+  // Configure Stripe API URL from environment variable or use localhost fallback
+  const apiUrl = String.fromEnvironment(
+    'STRIPE_API_URL',
+    defaultValue: 'http://localhost:3000',
+  );
+  StripeService().setApiBaseUrl(apiUrl);
+  
   runApp(const MyApp());
 }
 

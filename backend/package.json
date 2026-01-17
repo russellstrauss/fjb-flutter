@@ -1,0 +1,25 @@
+{
+  "name": "fjb-stripe-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Farmer John's Botanicals Stripe Checkout integration",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "stripe",
+    "checkout",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "stripe": "^14.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  }
+}
+
