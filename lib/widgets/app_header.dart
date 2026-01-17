@@ -81,33 +81,39 @@ class _AppHeaderState extends State<AppHeader> {
               ),
               iconSize: 48,
             ),
-                // Logo (hidden if hideLogo is true)
+                // Logo (hidden if hideLogo is true or menu is open)
                 if (!widget.hideLogo)
-                  InkWell(
-                    onTap: () {
-                      _closeMenu();
-                      context.go('/');
-                    },
-                    child: SizedBox(
-                      height: 60,
-                      width: 60,
-                      child: ImageLoader.loadImage(
-                        '/assets/images/fjb-cotton-logo.svg',
-                        fit: BoxFit.contain,
-                        height: 60,
-                        width: 60,
-                        errorWidget: Container(
+                  Opacity(
+                    opacity: _menuOpen ? 0.0 : 1.0,
+                    child: IgnorePointer(
+                      ignoring: _menuOpen,
+                      child: InkWell(
+                        onTap: () {
+                          _closeMenu();
+                          context.go('/');
+                        },
+                        child: SizedBox(
                           height: 60,
                           width: 60,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'FJB',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                          child: ImageLoader.loadImage(
+                            '/assets/images/fjb-cotton-logo.svg',
+                            fit: BoxFit.contain,
+                            height: 60,
+                            width: 60,
+                            errorWidget: Container(
+                              height: 60,
+                              width: 60,
+                              decoration: const BoxDecoration(
+                                color: Colors.black,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'FJB',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
