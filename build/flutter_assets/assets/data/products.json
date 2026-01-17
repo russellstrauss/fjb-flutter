@@ -86,49 +86,6 @@
     ]
   },
   {
-    "id": 472,
-    "name": "The Space Vag",
-    "slug": "the-space-vag",
-    "sku": "the-space-vag",
-    "price": 50,
-    "regular_price": 50,
-    "sale_price": null,
-    "short_description": "Represent your feminism and girl power with the original \nSpace Vag design!",
-    "images": [
-      "/uploads/2025/space-vag.jpg",
-      "/uploads/2025/space-vag-5.jpg",
-      "/uploads/2025/space-vag-3.jpg",
-      "/uploads/2025/space-vag-4.jpg",
-      "/uploads/2025/space-vag-2.jpg"
-    ],
-    "colors": [
-      "Hot Hibiscus / Powder Pink",
-      "Aquamarine",
-      "Hydrangea",
-      "Sea Glass",
-      "Wisteria"
-    ],
-    "categories": [
-      {
-        "name": "Reverse Dyes",
-        "slug": "reverse-dyes"
-      }
-    ],
-    "tags": [],
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "2XL",
-      "3XL",
-      "4XL"
-    ],
-    "currency": "USD",
-    "type": "simple",
-    "featured": false
-  },
-  {
     "id": 473,
     "name": "Chilled Gravity Spiral",
     "slug": "cosmic-purple-gravity-spiral",

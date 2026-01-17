@@ -11,6 +11,7 @@ class CartService {
   }
 
   static const String _storageKey = 'fjb_cart';
+  static const double shippingRate = 10.0;
   List<CartItem> _cartItems = [];
 
   Future<void> _loadCart() async {
@@ -98,8 +99,16 @@ class CartService {
     return _cartItems.isEmpty;
   }
 
-  double getTotal() {
+  double getSubtotal() {
     return _cartItems.fold(0.0, (total, item) => total + (item.price * item.quantity));
+  }
+
+  double getShipping() {
+    return _cartItems.isEmpty ? 0.0 : shippingRate;
+  }
+
+  double getTotal() {
+    return getSubtotal() + getShipping();
   }
 
   int getItemCount() {

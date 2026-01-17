@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/product_service.dart';
 import '../models/category.dart';
 import '../widgets/app_header.dart';
@@ -78,9 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
-                          const Text(
+                          Text(
                             'Welcome to Farmer John\'s Botanicals!',
-                            style: TextStyle(
+                            style: GoogleFonts.montserrat(
                               fontSize: 28,
                               fontWeight: FontWeight.w600,
                             ),
@@ -96,19 +97,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 40),
-                          Wrap(
-                            spacing: 20,
-                            runSpacing: 20,
+                          Column(
                             children: [
                               _CategoryCard(
                                 title: 'All Dyes',
                                 image: '/assets/images/all-dyes.jpg',
                                 onTap: () => context.push('/shop'),
                               ),
-                              ..._categories.map((category) => _CategoryCard(
-                                    title: category.name,
-                                    image: _getCategoryImage(category),
-                                    onTap: () => context.push('/shop?category=${category.slug}'),
+                              ..._categories.map((category) => Padding(
+                                    padding: const EdgeInsets.only(top: 20),
+                                    child: _CategoryCard(
+                                      title: category.name,
+                                      image: _getCategoryImage(category),
+                                      onTap: () => context.push('/shop?category=${category.slug}'),
+                                    ),
                                   )),
                             ],
                           ),
@@ -137,35 +139,28 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 250, maxWidth: 500),
+    return Material(
+      elevation: 6,
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         child: Stack(
           children: [
-            Container(
+            SizedBox(
+              width: double.infinity,
               height: 300,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: ImageLoader.loadImage(image, fit: BoxFit.cover),
-              ),
+              child: ImageLoader.loadImage(image, fit: BoxFit.cover),
             ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.black.withOpacity(0.3),
-              ),
+            Positioned.fill(
               child: Center(
                 child: Text(
-                  title,
-                  style: const TextStyle(
+                  title.toUpperCase(),
+                  style: GoogleFonts.montserrat(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 42,
                     fontWeight: FontWeight.bold,
-                    shadows: [
+                    letterSpacing: 2.5,
+                    shadows: const [
                       Shadow(
                         color: Colors.black,
                         blurRadius: 10,

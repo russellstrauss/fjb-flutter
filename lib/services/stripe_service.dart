@@ -1,13 +1,25 @@
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/cart_item.dart';
+import 'cart_service.dart';
 
 class StripeService {
   static final StripeService _instance = StripeService._internal();
   factory StripeService() => _instance;
   StripeService._internal();
 
-  Future<void> createCheckoutSession({
+  // Default API URL - can be configured via environment or config
+  // In production, set this via environment variables or a config file
+  String? _apiBaseUrl;
+  
+  String? get apiBaseUrl => _apiBaseUrl;
+  
+  void setApiBaseUrl(String? url) {
+    _apiBaseUrl = url;
+  }
+
+  Future<String> createCheckoutSession({
     required List<CartItem> cartItems,
     Map<String, dynamic>? customerDetails,
     String? apiUrl,
@@ -41,6 +53,21 @@ class StripeService {
           'quantity': item.quantity,
         };
       }).toList();
+
+      // Add shipping as a line item if cart is not empty
+      if (cartItems.isNotEmpty) {
+        final shippingAmount = (CartService.shippingRate * 100).round();
+        lineItems.add({
+          'price_data': {
+            'currency': 'usd',
+            'product_data': {
+              'name': 'Shipping',
+            },
+            'unit_amount': shippingAmount,
+          },
+          'quantity': 1,
+        });
+      }
 
       // Prepare request body
       final metadata = <String, dynamic>{
@@ -88,17 +115,62 @@ class StripeService {
         }
       }
 
-      // For demo purposes, if there's no backend API, we'll simulate
-      // In production, you'd call the actual API endpoint
-      final url = apiUrl ?? '/api/create-checkout';
-      
-      // If we're in a web environment, we can make the actual API call
-      // For mobile, we might need to handle this differently
-      // For now, we'll throw an error suggesting to implement the backend
-      
-      // Note: In a real implementation, you'd use http package to make the POST request
-      // and then use url_launcher to open the returned checkout URL
-      throw Exception('Stripe checkout requires backend API. Please implement the API endpoint or use Stripe SDK for mobile.');
+      // Determine the API URL
+      String endpointUrl;
+      if (apiUrl != null) {
+        endpointUrl = apiUrl;
+      } else if (_apiBaseUrl != null && _apiBaseUrl!.isNotEmpty) {
+        endpointUrl = '$_apiBaseUrl/api/create-checkout';
+      } else {
+        // Try to use environment variable or show helpful error
+        throw Exception(
+          'Stripe API URL not configured. Please set the API base URL using StripeService().setApiBaseUrl("https://your-api.com") '
+          'or provide apiUrl parameter. The backend should create a Stripe Checkout session and return the checkout URL.'
+        );
+      }
+
+      // Make HTTP POST request to backend API
+      final uri = Uri.parse(endpointUrl);
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(requestBody),
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Request timeout. Please check your internet connection and try again.');
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = json.decode(response.body) as Map<String, dynamic>;
+        
+        // Expecting the response to have a 'url' or 'checkoutUrl' field with the Stripe Checkout URL
+        final checkoutUrl = responseData['url'] as String? ?? 
+                           responseData['checkoutUrl'] as String? ??
+                           responseData['checkout_url'] as String?;
+        
+        if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
+          return checkoutUrl;
+        } else {
+          throw Exception('Backend API did not return a checkout URL. Response: ${response.body}');
+        }
+      } else {
+        // Try to parse error message from response
+        String errorMessage = 'Failed to create checkout session';
+        try {
+          final errorData = json.decode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData['error'] as String? ?? 
+                        errorData['message'] as String? ?? 
+                        errorMessage;
+        } catch (_) {
+          // If response is not JSON, use the status code
+          errorMessage = 'HTTP ${response.statusCode}: ${response.reasonPhrase}';
+        }
+        throw Exception(errorMessage);
+      }
     } catch (error) {
       print('Error creating checkout session: $error');
       rethrow;

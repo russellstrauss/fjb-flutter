@@ -19,6 +19,8 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final items = _cartService.getItems();
+    final subtotal = _cartService.getSubtotal();
+    final shipping = _cartService.getShipping();
     final total = _cartService.getTotal();
     final isEmpty = _cartService.isEmpty();
 
@@ -81,22 +83,54 @@ class _CartScreenState extends State<CartScreen> {
                               color: Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Column(
                               children: [
-                                const Text(
-                                  'Total:',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Subtotal:',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    Text(
+                                      _cartService.formatPrice(subtotal),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  _cartService.formatPrice(total),
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Shipping:',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    Text(
+                                      _cartService.formatPrice(shipping),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                                const Divider(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Total:',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      _cartService.formatPrice(total),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

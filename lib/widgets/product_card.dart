@@ -44,9 +44,16 @@ class ProductCard extends StatelessWidget {
               children: [
                 AspectRatio(
                   aspectRatio: 1.0,
-                  child: ImageLoader.loadImage(
-                    _getProductImage(),
-                    fit: BoxFit.cover,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                    child: ClipRect(
+                      child: ImageLoader.loadImage(
+                        _getProductImage(),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
                 if (hasSale)

@@ -153,17 +153,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'notes': _orderNotesController.text.isEmpty ? null : _orderNotesController.text,
       };
 
-      await _stripeService.createCheckoutSession(
+      final checkoutUrl = await _stripeService.createCheckoutSession(
         cartItems: _cartService.getItems(),
         customerDetails: customerDetails,
       );
 
-      // Note: In a real implementation, this would redirect to Stripe checkout
-      // For now, we'll show a message
+      // Launch the Stripe checkout URL
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Stripe checkout requires backend API implementation')),
-      );
+      await _stripeService.launchCheckoutUrl(checkoutUrl);
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -181,6 +178,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final items = _cartService.getItems();
+    final subtotal = _cartService.getSubtotal();
+    final shipping = _cartService.getShipping();
     final total = _cartService.getTotal();
     final isEmpty = _cartService.isEmpty();
 
@@ -379,6 +378,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                       ),
                                     )),
                                 const Divider(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('Subtotal:', style: TextStyle(fontSize: 16)),
+                                    Text(_cartService.formatPrice(subtotal), style: const TextStyle(fontSize: 16)),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('Shipping:', style: TextStyle(fontSize: 16)),
+                                    Text(_cartService.formatPrice(shipping), style: const TextStyle(fontSize: 16)),
+                                  ],
+                                ),
+                                const Divider(height: 20),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [

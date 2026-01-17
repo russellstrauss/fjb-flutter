@@ -159,7 +159,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                   height: 500,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey.shade300),
+                                    border: Border.all(color: Colors.black, width: 1),
                                   ),
                                   child: ClipRect(
                                     child: ImageLoader.loadImage(
@@ -192,7 +192,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                           decoration: BoxDecoration(
                                             border: Border.all(
                                               color: isSelected ? Colors.black : Colors.grey.shade300,
-                                              width: isSelected ? 2 : 1,
+                                              width: 1,
                                             ),
                                           ),
                                           child: ClipRect(
@@ -267,6 +267,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 const SizedBox(height: 10),
                                 Wrap(
                                   spacing: 10,
+                                  runSpacing: 10,
                                   children: _product!.colors!.map((color) {
                                     return Chip(label: Text(color));
                                   }).toList(),
