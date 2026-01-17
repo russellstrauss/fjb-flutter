@@ -115,49 +115,55 @@ class _AppHeaderState extends State<AppHeader> {
                       ),
                     ),
                   ),
-                // Cart icon with badge
-                Stack(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.shopping_cart),
-                      iconSize: 48,
-                      onPressed: () {
-                        _closeMenu();
-                        context.push('/cart');
-                      },
+                // Cart icon with badge (hidden when menu is open)
+                Opacity(
+                  opacity: _menuOpen ? 0.0 : 1.0,
+                  child: IgnorePointer(
+                    ignoring: _menuOpen,
+                    child: Stack(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.shopping_cart, color: Colors.black),
+                          iconSize: 48,
+                          onPressed: () {
+                            _closeMenu();
+                            context.push('/cart');
+                          },
+                        ),
+                        Positioned(
+                          right: 6,
+                          top: 6,
+                          child: FutureBuilder<int>(
+                            future: Future.value(_cartService.getItemCount()),
+                            builder: (context, snapshot) {
+                              final count = snapshot.data ?? 0;
+                              if (count == 0) return const SizedBox.shrink();
+                              return Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                child: Text(
+                                  count.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    Positioned(
-                      right: 6,
-                      top: 6,
-                      child: FutureBuilder<int>(
-                        future: Future.value(_cartService.getItemCount()),
-                        builder: (context, snapshot) {
-                          final count = snapshot.data ?? 0;
-                          if (count == 0) return const SizedBox.shrink();
-                          return Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 16,
-                              minHeight: 16,
-                            ),
-                            child: Text(
-                              count.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
