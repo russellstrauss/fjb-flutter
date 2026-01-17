@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AppFooter extends StatelessWidget {
   const AppFooter({super.key});
@@ -16,13 +18,13 @@ class AppFooter extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _SocialLink(
-            icon: Icons.camera_alt,
+            iconPath: 'assets/images/instagram-icon.svg',
             label: 'Instagram',
             url: 'https://www.instagram.com/farmerjohnsbotanicals/',
           ),
           const SizedBox(width: 20),
           _SocialLink(
-            icon: Icons.email,
+            iconPath: 'assets/images/email-icon.svg',
             label: 'Email',
             url: 'mailto:farmerjsbotanicals@gmail.com',
           ),
@@ -33,12 +35,12 @@ class AppFooter extends StatelessWidget {
 }
 
 class _SocialLink extends StatelessWidget {
-  final IconData icon;
+  final String iconPath;
   final String label;
   final String url;
 
   const _SocialLink({
-    required this.icon,
+    required this.iconPath,
     required this.label,
     required this.url,
   });
@@ -52,14 +54,23 @@ class _SocialLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // On Flutter Web, strip 'assets/' prefix to avoid double prefix issue
+    // Flutter Web automatically prepends '/assets/' to asset paths
+    String assetPath = iconPath;
+    if (kIsWeb && assetPath.startsWith('assets/')) {
+      assetPath = assetPath.substring(7); // Remove 'assets/' prefix
+    }
+
     return InkWell(
       onTap: _launchUrl,
-      child: Row(
-        children: [
-          Icon(icon, size: 24),
-          const SizedBox(width: 8),
-          Text(label),
-        ],
+      child: SvgPicture.asset(
+        assetPath,
+        width: 24,
+        height: 24,
+        colorFilter: ColorFilter.mode(
+          Theme.of(context).colorScheme.onSurface,
+          BlendMode.srcIn,
+        ),
       ),
     );
   }
