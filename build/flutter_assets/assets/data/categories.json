@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Ice Dyes",
+    "slug": "ice-dyes",
+    "description": "Beautiful marbled watercolor fashions"
+  },
+  {
+    "name": "Reverse Dyes",
+    "slug": "reverse-dyes",
+    "description": "Removing factory colors for high contrast vivid colors"
+  },
+  {
+    "name": "Liquid Dyes",
+    "slug": "liquid-dyes",
+    "description": "Liquid dye for the brightest and most vivid color saturation"
+  }
+]

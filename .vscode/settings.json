@@ -1,0 +1,22 @@
+{
+  // Prevent automatic file opening behavior
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+  "workbench.editor.enablePreviewFromCodeNavigation": false,
+  
+  // Close editors when clicking away
+  "workbench.editor.closeOnFileDelete": true,
+  
+  // Limit the number of open editors
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 1,
+  "workbench.editor.limit.perEditorGroup": true,
+  
+  // Automatically hot reload on save
+  "dart.flutterHotReloadOnSave": true
+}
+
+
+
+
+
