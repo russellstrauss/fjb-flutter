@@ -41,6 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
 			case 'reverse-dye':
 			case 'reverse-dyes':
 				return '/assets/images/reverse-dye.jpg';
+			case 'graphic-dye':
+			case 'graphic-dyes':
+				return '/assets/images/graphic-dyes.jpg';
 			default:
 				final products = _productService.getProductsByCategory(category.slug);
 				if (products.isNotEmpty && products[0].images.isNotEmpty) {

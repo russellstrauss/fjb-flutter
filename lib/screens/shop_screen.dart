@@ -29,7 +29,7 @@ class _ShopScreenState extends State<ShopScreen> {
 	}
 
 	Future<void> _loadData() async {
-		await _productService.loadProducts();
+		await _productService.loadProducts(forceReload: true);
 		setState(() {
 			_categories = _productService.getAllCategories();
 			_updateFilteredProducts();

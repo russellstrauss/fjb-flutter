@@ -201,5 +201,123 @@
     "currency": "USD",
     "type": "simple",
     "featured": false
+  },
+  {
+    "id": 480,
+    "name": "Kirby",
+    "slug": "kirby",
+    "sku": "kirby",
+    "price": 60,
+    "regular_price": 60,
+    "sale_price": null,
+    "short_description": "Your favorite pink sphere!",
+    "images": [
+      "assets/images/products/2026/kirby.jpg"
+    ],
+    "colors": [
+      "Hot Hibiscus",
+      "Powder Pink"
+    ],
+    "categories": [
+      {
+        "name": "Graphic Dyes",
+        "slug": "graphic-dyes"
+      }
+    ],
+    "tags": [],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL",
+      "4XL"
+    ],
+    "currency": "USD",
+    "type": "simple",
+    "featured": false
+  },
+  {
+    "id": 485,
+    "name": "Ramen",
+    "slug": "ramen",
+    "sku": "ramen",
+    "price": 60,
+    "regular_price": 60,
+    "sale_price": null,
+    "short_description": "Maruchan Instand Lunch!",
+    "images": [
+		"assets/images/products/2026/ramen-1.jpg",
+		"assets/images/products/2026/ramen-2.jpg"
+    ],
+    "stock_quantity": 1,
+    "stock_status": "instock",
+    "in_stock": true,
+    "manage_stock": true,
+    "colors": [
+      "Burgundy",
+      "Marigold"
+    ],
+    "categories": [
+      {
+        "name": "Graphic Dyes",
+        "slug": "graphic-dyes"
+      }
+    ],
+    "tags": [],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL",
+      "4XL"
+    ],
+    "currency": "USD",
+    "type": "simple",
+    "featured": false
+  },
+  {
+    "id": 490,
+    "name": "Swamp Thing",
+    "slug": "swamp-thing",
+    "sku": "swamp-thing",
+    "price": 50,
+    "regular_price": 50,
+    "sale_price": null,
+    "short_description": "Creature of the swamp.",
+    "images": [
+      "assets/images/products/2026/swamp-thing-1.jpg",
+      "assets/images/products/2026/swamp-thing-2.jpg"
+    ],
+    "stock_quantity": 1,
+    "stock_status": "instock",
+    "in_stock": true,
+    "manage_stock": true,
+    "colors": [
+      "Ice Kaleidocscope Green",
+      "Ice Kaleidocscope Purple"
+    ],
+    "categories": [
+      {
+        "name": "Ice Dyes",
+        "slug": "ice-dyes"
+      }
+    ],
+    "tags": [],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL",
+      "4XL"
+    ],
+    "currency": "USD",
+    "type": "simple",
+    "featured": false
   }
 ]

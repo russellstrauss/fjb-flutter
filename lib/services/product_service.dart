@@ -11,17 +11,29 @@ class ProductService {
 	List<Product> _products = [];
 	bool _loaded = false;
 
-	Future<List<Product>> loadProducts() async {
-		if (_loaded) return _products;
+	Future<List<Product>> loadProducts({bool forceReload = false}) async {
+		if (_loaded && !forceReload) return _products;
+		
+		if (forceReload) {
+			_loaded = false;
+		}
 
 		try {
 			final String jsonString =
 					await rootBundle.loadString('assets/data/products.json');
 			final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
-			_products = jsonList
-					.map((json) => Product.fromJson(json as Map<String, dynamic>))
-					.toList();
+			final List<Product> loadedProducts = [];
+			for (var json in jsonList) {
+				try {
+					final product = Product.fromJson(json as Map<String, dynamic>);
+					loadedProducts.add(product);
+				} catch (e) {
+					print('Error parsing product: $e, JSON: $json');
+				}
+			}
+			_products = loadedProducts;
 			_loaded = true;
+			print('Loaded ${_products.length} products');
 			return _products;
 		} catch (error) {
 			print('Error loading products: $error');
