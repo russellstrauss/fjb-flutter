@@ -170,7 +170,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 		} catch (error) {
 			if (!mounted) return;
 			ScaffoldMessenger.of(context).showSnackBar(
-				SnackBar(content: Text('Error: $error')),
+				const SnackBar(content: Text('Payment button is disabled on this version of the app. Visit https://farmerjohnsbotanicals.com for orders.')),
 			);
 		} finally {
 			if (mounted) {
