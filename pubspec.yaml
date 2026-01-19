@@ -18,6 +18,9 @@ dependencies:
   webview_flutter: ^4.4.2
   flutter_svg: ^2.0.9
   google_fonts: ^6.1.0
+  logger: ^2.0.2
+  dart_jsonwebtoken: ^2.9.3
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:
